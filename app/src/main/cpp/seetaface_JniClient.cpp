@@ -341,11 +341,11 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 	int32_t num_face = static_cast<int32_t>(faces.size());
 	if(0 == num_face ){
 		//没有人脸
-		LOGD("CMDetectFace, 没有人脸");
+		LOGD("CMDetectFace, No face detected");
 		jstring rtstr = env->NewStringUTF("");
 		return rtstr;
 	}else{
-		LOGD("CMDetectFace, 人脸数:%d", num_face);
+		LOGD("CMDetectFace, Number of faces:%d", num_face);
 	}
 
 	//初始化人脸对齐器
