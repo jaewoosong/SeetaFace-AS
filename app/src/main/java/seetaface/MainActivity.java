@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -78,13 +79,14 @@ public class MainActivity extends Activity {
 		imvFace2.setImageBitmap(null);
 		
 		mFaceNum1 = 0; 
-		mFaceNum2 = 0; 
-		//获取正面人脸检测模型文件目录，这里因为有3个文件，都在同一个目录下，就只穿目录，不传文件路径
+		mFaceNum2 = 0;
+
 		//mFaceDetectModelPath = getAssetFilePath("seeta_fd_frontal_v1.0.bin");
 		//mFAModelPath = getAssetFilePath("seeta_fa_v1.1.bin");
 		//Log.i("loadimg", "mFAModelPath="+mFAModelPath); 
- 
-		mFaceModelDir = "/sdcard/";
+
+        //mFaceModelDir = "/sdcard/";
+        mFaceModelDir = Environment.getExternalStorageDirectory().getPath() + "/";
 		    
 		//检查人脸检测模型文件是否存在
 		String tPath = mFaceModelDir + "seeta_fd_frontal_v1.0.bin";

@@ -15,8 +15,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <android/bitmap.h>
-
-//#include <opencv2/opencv.hpp>
 #include "FaceDetection/include/common.h"
 
 #include "FaceDetection/include/face_detection.h"
@@ -51,11 +49,11 @@ extern "C" {
 #endif
 
 /*
-	gamma变换调节亮度,
-	用法 jni.CMimGamma(Bitmap vBmpSrc, Bitmap vBmpDst, float vGamma)
+	gamma transformation for adjusting brightness
+	Usage: jni.CMimGamma(Bitmap vBmpSrc, Bitmap vBmpDst, float vGamma)
  */
-JNIEXPORT void JNICALL Java_seetaface_JniClient_CMimGamma(JNIEnv
-		* env, jobject  obj, jobject bitmapcolor1, jobject bitmapcolor2, float vGamma)
+JNIEXPORT void JNICALL Java_seetaface_JniClient_CMimGamma(JNIEnv *env, jobject obj,
+                                           jobject bitmapcolor1, jobject bitmapcolor2, float vGamma)
 {
 	AndroidBitmapInfo  infocolor1;
 	void*              pixelscolor1;
@@ -76,14 +74,14 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMimGamma(JNIEnv
 		return;
 	}
 
-	LOGI("color image 1 :: width is %d; height is %d; stride is %d; format is %d;flags is %d",
+	LOGI("color image 1: width is %d; height is %d; stride is %d; format is %d; flags is %d",
 			infocolor1.width,infocolor1.height,infocolor1.stride,infocolor1.format,infocolor1.flags);
 	if (infocolor1.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		LOGE("infocolor1 format is not RGBA_8888 !");
 		return;
 	}
 
-	LOGI("color image 2:: width is %d; height is %d; stride is %d; format is %d;flags is %d",
+	LOGI("color image 2: width is %d; height is %d; stride is %d; format is %d; flags is %d",
 			infocolor2.width,infocolor2.height,infocolor2.stride,infocolor2.format,infocolor2.flags);
 	if (infocolor2.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		LOGE("infocolor2 format is not RGBA_8888 !");
@@ -110,17 +108,17 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMimGamma(JNIEnv
 
 			line2[x].alpha = line1[x].alpha;
 
-			red = (line1[x].red + 0.5F)/256;//归一化
+			red = (line1[x].red + 0.5F)/256; //normalization
 			red = (float)pow(red, vGamma);
-			line2[x].red = (uint8_t)(red*256-0.5F);//反归一化
+			line2[x].red = (uint8_t)(red*256-0.5F); //de-normalization
 
-			green = (line1[x].green + 0.5F)/256;//归一化
+			green = (line1[x].green + 0.5F)/256;//normalization
 			green = (float)pow(green, vGamma);
-			line2[x].green = (uint8_t)(green*256-0.5F);//反归一化
+			line2[x].green = (uint8_t)(green*256-0.5F);//de-normalization
 
-			blue = (line1[x].blue + 0.5F)/256;//归一化
+			blue = (line1[x].blue + 0.5F)/256;//normalization
 			blue = (float)pow(blue, vGamma);
-			line2[x].blue = (uint8_t)(blue*256-0.5F);//反归一化
+			line2[x].blue = (uint8_t)(blue*256-0.5F);//de-normalization
 
 		}
 
@@ -134,10 +132,10 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMimGamma(JNIEnv
 }
 
 /*
-彩色转灰度图
+Color to grayscale
  */
-JNIEXPORT void JNICALL Java_seetaface_JniClient_CMim2gray(JNIEnv
-		* env, jobject  obj, jobject bitmapcolor,jobject bitmapgray)
+JNIEXPORT void JNICALL Java_seetaface_JniClient_CMim2gray(JNIEnv *env, jobject obj,
+                                                          jobject bitmapcolor, jobject bitmapgray)
 {
 	AndroidBitmapInfo  infocolor;
 	void*              pixelscolor;
@@ -158,7 +156,7 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMim2gray(JNIEnv
 		return;
 	}
 
-	LOGI("color image :: width is %d; height is %d; stride is %d; format is %d;flags is %d",
+	LOGI("color image :: width is %d; height is %d; stride is %d; format is %d; flags is %d",
 			infocolor.width,infocolor.height,infocolor.stride,infocolor.format,infocolor.flags);
 	if (infocolor.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
 		LOGE("Bitmap format is not RGBA_8888 !");
@@ -166,7 +164,7 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMim2gray(JNIEnv
 	}
 
 
-	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d;flags is %d",
+	LOGI("gray image :: width is %d; height is %d; stride is %d; format is %d; flags is %d",
 			infogray.width,infogray.height,infogray.stride,infogray.format,infogray.flags);
 	if (infogray.format != ANDROID_BITMAP_FORMAT_A_8) {
 		LOGE("Bitmap format is not A_8 !");
@@ -201,14 +199,15 @@ JNIEXPORT void JNICALL Java_seetaface_JniClient_CMim2gray(JNIEnv
 }
 
 /*
- *计算2个人脸的相似度， 根据人脸编号，找到他们的特征文件来比对
+ * Calculate the similarity of 2 faces
+ * find their signature files based on face numbers
  */
 JNIEXPORT jfloat JNICALL Java_seetaface_JniClient_CMCalcFaceSim
 (JNIEnv *env, jobject obj, jint vFaceNo1, jint vFaceNo2, jstring vFaceModelPath)
 {
 	jstring tRtnNullStr = env->NewStringUTF("");
 	float tSim = -1;
-	//获取正面人脸检测模型的绝对路径
+	// Obtain the absolute path of the face detection model
 	const char* tFaceModelPath;
 	tFaceModelPath = env->GetStringUTFChars(vFaceModelPath, 0);
 	if(tFaceModelPath == NULL) {
@@ -220,7 +219,7 @@ JNIEXPORT jfloat JNICALL Java_seetaface_JniClient_CMCalcFaceSim
 
 	string tFaceModelPathStr = tFaceModelPath;
 
-	//识别模型路径
+	// Identify the model path
 	string tRecoModelPath = tFaceModelPathStr + "seeta_fr_v1.0.bin";
 //	LOGD("CMCalcFaceSim,  tRecoModelPath=%s", tRecoModelPath.c_str());
 	FaceIdentification face_recognizer(tRecoModelPath.c_str());
@@ -256,7 +255,7 @@ JNIEXPORT jfloat JNICALL Java_seetaface_JniClient_CMCalcFaceSim
 
 	// Caculate similarity of two faces
 	tSim = face_recognizer.CalcSimilarity(feat1, feat2);
-	//保留2位小数
+	// Keep 2 decimal places
 	tSim = int(100*tSim)/100.0;
 	//LOGD("CMCalcFaceSim, tSim=%.2f",tSim);
 	env->ReleaseStringUTFChars(vFaceModelPath, tFaceModelPath);
@@ -265,7 +264,8 @@ JNIEXPORT jfloat JNICALL Java_seetaface_JniClient_CMCalcFaceSim
 }
 
 /*
- *检测人脸，获取人脸范围及5个点的坐标
+ * Detect the face
+ * get the face range and the coordinates of the 5 points
  */
 JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 (JNIEnv *env, jobject obj, jbyteArray v_img_data,
@@ -276,7 +276,7 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 
 	jbyte *tImgData = env->GetByteArrayElements(v_img_data,0);
 
-	//获取正面人脸检测模型的绝对路径
+	// Obtain the absolute path of the face detection model
 	const char* tFaceModelPath;
 	tFaceModelPath = env->GetStringUTFChars(vFaceModelPath, 0);
 	if(tFaceModelPath == NULL) {
@@ -288,37 +288,37 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 
 	string tFaceModelPathStr = tFaceModelPath;
 
-	//检测模型路径
+	// Detection model path
 	string tDetectModelPath = tFaceModelPathStr + "seeta_fd_frontal_v1.0.bin";
 	//LOGD("CMDetectFace,  tDetectModelPath=%s", tDetectModelPath.c_str());
 
-	//对齐模型路径
+	// Align model path
 	string tAlignModelPath = tFaceModelPathStr + "seeta_fa_v1.1.bin";
 	//LOGD("CMDetectFace,  tAlignModelPath=%s", tAlignModelPath.c_str());
 
-	//识别模型路径
+	// Recognization model path
 	string tRecoModelPath = tFaceModelPathStr + "seeta_fr_v1.0.bin";
 	//LOGD("CMDetectFace,  tRecoModelPath=%s", tRecoModelPath.c_str());
 
-	//初始化人脸检测器
+	// Initialize the face detector
 	seeta::FaceDetection detector(tDetectModelPath.c_str());
 	//LOGD("CMDetectFace, detector ok");
 
-	//4通道转3通道
+	// Convert 4-channel to 3-channel
 	unsigned char *rgb_bmp = new unsigned char[rows*cols*3];
 	CMImgProc::RGBA2RGB((unsigned char*)tImgData, rgb_bmp, cols, rows);
 
+	// Convert 4-channel to grayscale
 	unsigned char *gray = new unsigned char[rows*cols];
 	CMImgProc::RGBA2GRAY((unsigned char*)tImgData, gray, cols, rows, ch);
-	//LOGD("灰度化ok===");
-
+	//LOGD("Grayscale ok===");
 	//LOGD("tImg, rows=%d, cols=%d",   tImg.rows, tImg.cols);
 
 	ImageData img_color;
 	img_color.data = rgb_bmp;
 	img_color.width = cols;
 	img_color.height = rows;
-	img_color.num_channels = 3; //因为recognizer要求的是3通道
+	img_color.num_channels = 3; // Because the recognizer requires 3 channels
 
 	ImageData img_gray;
 	img_gray.data = gray;
@@ -326,21 +326,20 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 	img_gray.height = rows;
 	img_gray.num_channels = 1;
 
-
 	time_t t0;
 	int tTime0;
 	tTime0 = time(&t0);
-	LOGD("CMDetectFace, 当前time:%d", tTime0);
+	LOGD("CMDetectFace, Current time: %d", tTime0);
 
 	std::vector<seeta::FaceInfo> faces = detector.Detect(img_gray);
 	//LOGD("CMDetectFace, detector.Detect");
 	time_t t1;
 	int tTime1 = time(&t1);
-	LOGD("CMDetectFace, 检测耗时:%d秒", tTime1 - tTime0);
+	LOGD("CMDetectFace, Time for detection: %d seconds", tTime1 - tTime0);
 
 	int32_t num_face = static_cast<int32_t>(faces.size());
 	if(0 == num_face ){
-		//没有人脸
+		// No face detected
 		LOGD("CMDetectFace, No face detected");
 		jstring rtstr = env->NewStringUTF("");
 		return rtstr;
@@ -348,7 +347,7 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 		LOGD("CMDetectFace, Number of faces:%d", num_face);
 	}
 
-	//初始化人脸对齐器
+	// Face alignment initialization
 	seeta::FaceAlignment point_detector(tAlignModelPath.c_str());
 	//LOGD("CMDetectFace, point_detector ok");
 
@@ -356,32 +355,32 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 	char tPosStr[200] = {0};
 
 	for(int i=0; i<num_face; i++){
-		//每个人脸位置数据用分号分隔
+		// Each face location data is separated by a semicolon
 		if(i > 0){
 			tRetFacePosStr += ";";
 		}
 
-		//组装脸部矩形数据
+		// Assemble face rectangle data
 		seeta::FaceInfo tFace = faces[i];
 		sprintf(tPosStr, "%d,%d,%d,%d",
 				tFace.bbox.x, tFace.bbox.y, tFace.bbox.width, tFace.bbox.height);
 
 		//LOGD("face_tchar=%s", tPosStr);
 
-		//首先记录人脸位置坐标，4个int
+		// First, record the face position coordinates, 4 int
 		tRetFacePosStr += tPosStr;
 
-		//然后检测特征点
+		// And then detects the feature points
 		seeta::FacialLandmark face_points[5];
 		point_detector.PointDetectLandmarks(img_gray, faces[i], face_points);
-		//组装特征点字符串
+
+        // Assemble the feature point string
 		for(int i=0; i<5; i++){
 			char tPntStr[100] = {0};
 			sprintf(tPntStr, ",%d,%d", (int) face_points[i].x, (int)face_points[i].y);
 			tRetFacePosStr += tPntStr;
 			//strcat(pnts_str, x);
 		}
-		//
 	}
 //	LOGD("tRetFacePosStr=%s", tRetFacePosStr.c_str());
 
@@ -423,14 +422,12 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 
 		long tSize = tCropWidth * tCropHeight * tCropChannels;
 		unsigned char *tFaceBytes = new unsigned char[tSize];
-		//剪切出的人脸
+		// Face crop
 		ImageData img_face;
 		img_face.data = tFaceBytes;
 		img_face.width = face_recognizer.crop_width();
 		img_face.height = face_recognizer.crop_height();
 		img_face.num_channels = face_recognizer.crop_channels();
-
-		//裁剪出人脸
 		int tCropRet = face_recognizer.CropFace(img_color, face_points_x, img_face);
 
 
@@ -451,7 +448,7 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 			pixelscolor = (unsigned char *)pixelscolor + infocolor.stride;
 		}
 
-		//提取识别用的特征
+		// Extract the characteristics of identification
 		face_recognizer.ExtractFeatureWithCrop(img_color, face_points_x, feat1);
 		//LOGD("CMDetectFace, ExtractFeatureWithCrop 1 ok");
 
@@ -468,7 +465,7 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 
 	time_t t2;
 	int tTime2 = time(&t2);
-	LOGD("CMDetectFace, 总耗时:%d秒", tTime2 - tTime0);
+	LOGD("CMDetectFace, Total time: %d seconds", tTime2 - tTime0);
 
 	env->ReleaseStringUTFChars(vFaceModelPath, tFaceModelPath);
 
@@ -478,7 +475,7 @@ JNIEXPORT jstring JNICALL Java_seetaface_JniClient_CMDetectFace
 
 
 /*
- *剪切出人脸
+ * Crop faces
  */
 JNIEXPORT jbyteArray JNICALL Java_seetaface_JniClient_CMCropFace
 (JNIEnv *env, jobject obj, jbyteArray v_img_data,
@@ -491,6 +488,7 @@ JNIEXPORT jbyteArray JNICALL Java_seetaface_JniClient_CMCropFace
 	jbyte *tImgData = env->GetByteArrayElements(v_img_data,0);
 
 	return v_img_data;
+    // below is unsearchable code because there is 'return' above
 
 	jbyteArray tRetFace = env->NewByteArray(256*256*3);
 

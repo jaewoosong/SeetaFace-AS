@@ -1,14 +1,14 @@
-# 查找源文件, 定义本地文件所在的目录路径
-LOCAL_PATH := $(call my-dir)
-# CLEAR_VARS由编译系统提供,指定让GNU MAKEFILE清除LOCAL_PATH
-# 以外的所有LOCAL_XXX变量
+# Find the source file and define the directory path where the local file is located
+# CLEAR_VARS provided by the compilation system, letting GNU MAKEFILE clear LOCAL_PATH
+# All other LOCAL_XXX variables
 
+LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-#无需opencv
+# OpenCV is not required
 #include D:\workspace\OpenCV-android-sdk\sdk\native\jni\opencv.mk
 #OPENCV_INSTALL_MODULES:=on
-#OPENCV_CAMERA_MODULES:=off 
+#OPENCV_CAMERA_MODULES:=off
 #OPENCV_LIB_TYPE:=STATIC
   
 LOCAL_MODULE := SeetafaceSo  
